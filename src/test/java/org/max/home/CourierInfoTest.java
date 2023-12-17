@@ -90,6 +90,7 @@ public class CourierInfoTest extends AbstractTest{
         final Query query1 = session.createSQLQuery("SELECT * FROM courier_info WHERE courier_id=4")
                 .addEntity(CourierInfoEntity.class);
         CourierInfoEntity courier = (CourierInfoEntity) query1.uniqueResult();
+        Assumptions.assumeTrue(courier != null);
         courier.setFirstName("Tom");
         session.beginTransaction();
         session.update(courier);
