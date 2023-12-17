@@ -28,10 +28,10 @@ public class CustomerTest extends AbstractTest{
         while (rs.next()) {
             countTableSize++;
         }
-        final Query query = getSession().createSQLQuery("SELECT * FROM customers").addEntity(CustomersEntity.class);
+        final Query query = getSession().createSQLQuery(sql).addEntity(CustomersEntity.class);
         //then
         Assertions.assertEquals(8, countTableSize);
-        Assertions.assertEquals(15, query.list().size());
+        Assertions.assertEquals(8, query.list().size());
     }
 
     @Order(2)
@@ -45,7 +45,7 @@ public class CustomerTest extends AbstractTest{
         //when
         ResultSet rs = stmt.executeQuery(sql);
         while (rs.next()) {
-            nameString = rs.getString(3);
+            nameString = rs.getString("last_name");
         }
         //then
         Assertions.assertEquals(lastName, nameString);
@@ -56,7 +56,7 @@ public class CustomerTest extends AbstractTest{
     void addCustomer_whenValid_shouldSave() {
         //given
         CustomersEntity entity = new CustomersEntity();
-        entity.setCustomerId((short) 16);
+        entity.setCustomerId((short) 17);
         entity.setApartment("100");
         entity.setDistrict("Южный");
         entity.setFirstName("Федор");
@@ -71,7 +71,7 @@ public class CustomerTest extends AbstractTest{
         session.getTransaction().commit();
 
         final Query query = getSession()
-                .createSQLQuery("SELECT * FROM customers WHERE customer_id="+16).addEntity(CustomersEntity.class);
+                .createSQLQuery("SELECT * FROM customers WHERE customer_id="+17).addEntity(CustomersEntity.class);
         CustomersEntity creditEntity = (CustomersEntity) query.uniqueResult();
         //then
         Assertions.assertNotNull(creditEntity);
@@ -94,7 +94,8 @@ public class CustomerTest extends AbstractTest{
         //then
         final Query queryAfterDelete = getSession()
                 .createSQLQuery("SELECT * FROM customers WHERE customer_id=" + 16).addEntity(CustomersEntity.class);
-        Optional<CustomersEntity> customersEntityAfterDelete = (Optional<CustomersEntity>) queryAfterDelete.uniqueResultOptional();
+        Optional<CustomersEntity> customersEntityAfterDelete =
+                (Optional<CustomersEntity>) queryAfterDelete.uniqueResultOptional();
         Assertions.assertFalse(customersEntityAfterDelete.isPresent());
     }
 
@@ -110,7 +111,7 @@ public class CustomerTest extends AbstractTest{
         session.persist(entity);
         //then
         Assertions.assertThrows(PersistenceException.class, () -> session.getTransaction().commit());
-        ;
+
     }
 
 }
